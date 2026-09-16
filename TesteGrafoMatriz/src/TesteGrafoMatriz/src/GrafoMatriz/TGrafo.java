@@ -147,4 +147,60 @@ public class TGrafo {
         }
         return true; 
     }
+
+	// Exercício 16
+    // Retorna a categoria de conexidade: 3 (C3), 2 (C2), 1 (C1) ou 0 (C0)
+    public int categoriaConexidade() {
+        if (this.n == 0) return 0;
+
+        // Matrizes auxiliares para o Algoritmo de Warshall
+        // 'reach' vê se existe caminho respeitando a direção
+        // 'undirReach' vê se existe caminho ignorando a direção (como se fosse ND)
+        boolean[][] reach = new boolean[this.n][this.n];
+        boolean[][] undirReach = new boolean[this.n][this.n];
+
+        // 1. Inicializa as matrizes com os dados das arestas diretas
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                if (i == j) {
+                    reach[i][j] = true;
+                    undirReach[i][j] = true;
+                } else {
+                    reach[i][j] = (this.adj[i][j] != 0);
+                    undirReach[i][j] = (this.adj[i][j] != 0 || this.adj[j][i] != 0);
+                }
+            }
+        }
+
+        // 2. Algoritmo de Warshall: Descobre se existe caminho indireto passando por 'k'
+        for (int k = 0; k < this.n; k++) {
+            for (int i = 0; i < this.n; i++) {
+                for (int j = 0; j < this.n; j++) {
+                    reach[i][j] = reach[i][j] || (reach[i][k] && reach[k][j]);
+                    undirReach[i][j] = undirReach[i][j] || (undirReach[i][k] && undirReach[k][j]);
+                }
+            }
+        }
+
+        // 3. Analisa as matrizes para classificar o grafo
+        boolean isC3 = true;
+        boolean isC2 = true;
+        boolean isC1 = true;
+
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                if (!reach[i][j]) isC3 = false; // Se faltar um caminho, não é C3
+                if (!reach[i][j] && !reach[j][i]) isC2 = false; // Se não tem ida NEM volta, não é C2
+                if (!undirReach[i][j]) isC1 = false; // Se ignorando direção ainda não conecta, não é C1
+            }
+        }
+
+        // Retorna a maior categoria que o grafo atendeu
+        if (isC3) return 3;
+        if (isC2) return 2;
+        if (isC1) return 1;
+        return 0; // Se reprovou em todas, é C0 (desconexo)
+    }
+	
+
 }
