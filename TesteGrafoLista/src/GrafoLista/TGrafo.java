@@ -102,4 +102,35 @@ public class TGrafo{
 	    }
 	    System.out.print("\n\nfim da impressao do grafo.\n");
 	}
+	public void removeVertice(int v) {
+		if (v < 0 || v >= n) return;
+
+		int novoN = n - 1;
+		TNo[] novoAdj = new TNo[novoN];
+		int novoM = 0;
+
+		for (int i = 0, novaLinha = 0; i < n; i++) {
+			if (i == v) continue;
+
+			TNo atual = adj[i];
+			TNo cauda = null;
+			while (atual != null) {
+				if (atual.w != v) {
+					TNo novoNo = new TNo();
+					novoNo.w = atual.w > v ? atual.w - 1 : atual.w;
+					if (cauda == null) novoAdj[novaLinha] = novoNo;
+					else cauda.prox = novoNo;
+					cauda = novoNo;
+					novoM++;
+				}
+				atual = atual.prox;
+			}
+			novaLinha++;
+		}
+
+		this.n = novoN;
+		this.adj = novoAdj;
+		this.m = novoM;
+	}
+
 }

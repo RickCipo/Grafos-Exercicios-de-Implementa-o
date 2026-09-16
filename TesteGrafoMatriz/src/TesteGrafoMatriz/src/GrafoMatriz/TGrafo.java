@@ -133,4 +133,18 @@ public class TGrafo {
 					return 0;
 		return 1;
 	}
+	// Exercício 13
+    // Verifica e retorna se o grafo dirigido é completo
+    public boolean isCompleto() {
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                // Em grafos dirigidos completos, precisamos de arestas indo e voltando.
+                // Portanto, todas as células (exceto a diagonal principal) devem ser 1.
+                if (i != j && this.adj[i][j] == 0) {
+                    return false; // Se faltar uma única aresta, já não é completo
+                }
+            }
+        }
+        return true; 
+    }
 }
