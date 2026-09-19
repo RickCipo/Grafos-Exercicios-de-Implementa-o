@@ -202,5 +202,63 @@ public class TGrafo {
         return 0; // Se reprovou em todas, é C0 (desconexo)
     }
 	
+	// Exercício 17
+    // Retorna o grafo reduzido de um grafo direcionado no formato de matriz de adjacência
+    public int[][] grafoReduzido() {
+        if (this.n == 0) return new int[0][0];
 
+        // 1. Calcula a matriz de alcançabilidade (Algoritmo de Warshall)
+        boolean[][] reach = new boolean[this.n][this.n];
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                if (i == j) reach[i][j] = true;
+                else reach[i][j] = (this.adj[i][j] != 0);
+            }
+        }
+        for (int k = 0; k < this.n; k++) {
+            for (int i = 0; i < this.n; i++) {
+                for (int j = 0; j < this.n; j++) {
+                    reach[i][j] = reach[i][j] || (reach[i][k] && reach[k][j]);
+                }
+            }
+        }
+
+        // 2. Identifica os agrupamentos (Componentes Fortemente Conexos)
+        int[] scc = new int[this.n]; // Guarda o ID do "super-vértice" ao qual cada vértice original pertence
+        for (int i = 0; i < this.n; i++) scc[i] = -1; // -1 significa ainda não agrupado
+
+        int numScc = 0; // Vai contar quantos "super-vértices" teremos no final
+        for (int i = 0; i < this.n; i++) {
+            if (scc[i] == -1) {
+                scc[i] = numScc; // O vértice i forma um novo grupo
+                // Procura todos os outros vértices que fecham ciclo com o 'i'
+                for (int j = i + 1; j < this.n; j++) {
+                    if (reach[i][j] && reach[j][i]) {
+                        scc[j] = numScc; // Se vão e voltam, entram no mesmo grupo!
+                    }
+                }
+                numScc++; // Avança para o próximo ID de agrupamento
+            }
+        }
+
+        // 3. Constrói a nova matriz de adjacência do grafo reduzido
+        int[][] reduzido = new int[numScc][numScc];
+
+        // 4. Preenche as arestas do novo grafo
+        for (int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                if (this.adj[i][j] != 0) { // Se existia aresta no grafo original
+                    int origemScc = scc[i];
+                    int destinoScc = scc[j];
+                    
+                    // Adiciona a ligação apenas se estiverem em "super-vértices" diferentes
+                    if (origemScc != destinoScc) {
+                        reduzido[origemScc][destinoScc] = 1;
+                    }
+                }
+            }
+        }
+
+        return reduzido;
+    }
 }
