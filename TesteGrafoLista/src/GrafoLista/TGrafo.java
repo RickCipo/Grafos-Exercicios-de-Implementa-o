@@ -113,21 +113,47 @@ public class TGrafo{
 		return grau;
 	}
 
-	//Exercício 19
-	//grau de saída de v: tamanho da lista adj[v]
-	public int outDegree(int v) {
-		int grau = 0;
-		TNo no = adj[v];
-		while (no != null) {
-			grau++;
-			no = no.prox;
-		}
-		return grau;
-	}
+	// Exercício 19
+    // Calcula o grau de saída do vértice v (Lista de Adjacência)
+    public int outDegree(int v) {
+        if (v < 0 || v >= this.n) {
+            System.out.println("Vértice inválido!");
+            return -1;
+        }
 
-	//Exercício 20
-	public int degree(int v) {
-		return inDegree(v) + outDegree(v);
+        int grauSaida = 0;
+        
+        // Pega diretamente o início da lista do vértice v
+        TNo atual = this.adj[v]; 
+
+        // Percorre a lista contando quantas arestas saem dele
+        while (atual != null) {
+            grauSaida++;
+            atual = atual.prox;
+        }
+
+        return grauSaida;
+    }
+	// Exercício 20
+	// Calcula o grau de entrada do vértice v (Lista de Adjacência)
+	public int inDegree(int v) {
+		if (v < 0 || v >= this.n) {
+			System.out.println("Vértice inválido!");
+			return -1;
+		}
+
+		int grauEntrada = 0;
+		for (int i = 0; i < this.n; i++) {
+			TNo atual = this.adj[i];
+			while (atual != null) {
+				if (atual.w == v) {
+					grauEntrada++;
+				}
+				atual = atual.prox;
+			}
+		}
+
+		return grauEntrada;
 	}
 
 	//Exercício 21
